@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
+
+	<ui:define name="menu">
+		<ui:include src="/templates/menu.xhtml" />
+	</ui:define>
+
+	<ui:define name="conteudo">
+		<h:form id="formFabricantes">
+			<p:dataTable id="tabelaFabricantes"
+				value="#{fabricanteBean.fabricantes}" var="fabricante"
+				emptyMessage="Nenhum registro encontrado." paginator="true"
+				rows="5">
+				<f:facet name="header">
+					Fabricantes
+				</f:facet>
+
+				<p:column headerText="Id" sortBy="#{fabricante.id}"
+					filterBy="#{fabricante.id}">
+					<h:outputText value="#{fabricante.id}" />
+				</p:column>
+
+				<p:column headerText="Descrição" sortBy="#{fabricante.descricao}"
+					filterBy="#{fabricante.descricao}">
+					<h:outputText value="#{fabricante.descricao}" />
+				</p:column>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						actionListener="#{fabricanteBean.prepararExcluir}"
+						oncomplete="PF('excluir').show();"
+						update=":formModalExcluir:modalExcluir" />	
+
+					<p:commandButton icon="ui-icon-pencil"
+						actionListener="#{fabricanteBean.prepararEditar}"
+						oncomplete="PF('editar').show();"
+						update=":formModalEditar:modalEditar" />
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{fabricanteBean.prepararAdicionar}"
+						oncomplete="PF('adicionar').show();"
+						update=":formModalNovo:modalNovo" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="adicionar" header="Novo Fabricante" modal="true"
+			appendTo="@(body)" resizable="false">
+			<h:form id="formModalNovo">
+				<h:panelGrid id="modalNovo" columns="2">
+					<p:outputLabel value="Descrição " />
+					<p:inputText size="30" maxlength="50"
+						value="#{fabricanteBean.fabricante.descricao}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Cancelar" onclick="PF('adicionar').hide();" />
+
+					<p:commandButton value="Salvar"
+						actionListener="#{fabricanteBean.adicionar}"
+						oncomplete="PF('adicionar').hide();"
+						update=":formFabricantes:tabelaFabricantes :mensagemGlobal" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="excluir" header="Excluir Fabricante" modal="true"
+			appendTo="@(body)" resizable="false">
+			<h:form id="formModalExcluir">
+				<h:panelGrid id="modalExcluir" columns="2">
+					<h:outputText value="Id: " />
+					<h:outputText value="#{fabricanteBean.fabricante.id}" />
+
+					<h:outputText value="Descrição: " />
+					<h:outputText value="#{fabricanteBean.fabricante.descricao}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Cancelar" onclick="PF('excluir').hide();" />
+
+					<p:commandButton value="Excluir"
+						actionListener="#{fabricanteBean.excluir}"
+						oncomplete="PF('excluir').hide();"
+						update=":formFabricantes:tabelaFabricantes :mensagemGlobal" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="editar" header="Editar Fabricante" modal="true"
+			appendTo="@(body)" resizable="false">
+			<h:form id="formModalEditar">
+				<h:panelGrid id="modalEditar" columns="2">
+					<p:outputLabel value="Descrição " />
+					<p:inputText value="#{fabricanteBean.fabricante.descricao}"
+						size="30" maxlength="50" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Cancelar" onclick="PF('editar').hide();" />
+
+					<p:commandButton value="Editar"
+						actionListener="#{fabricanteBean.editar}"
+						oncomplete="PF('editar').hide();"
+						update=":formFabricantes:tabelaFabricantes :mensagemGlobal" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

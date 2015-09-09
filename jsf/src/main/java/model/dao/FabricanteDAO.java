@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import model.Fabricante;
@@ -19,7 +20,7 @@ public class FabricanteDAO {
 		
 		ResultSet result = query.executeQuery();
 		
-		List<Fabricante> fabricantes = null;
+		List<Fabricante> fabricantes = new ArrayList<>();
 		while (result.next()) {
 			Fabricante fabricante = new Fabricante();
 			fabricante.setId(result.getInt("id_fabricante"));
