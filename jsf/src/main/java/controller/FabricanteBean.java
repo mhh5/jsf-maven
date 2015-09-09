@@ -1,6 +1,7 @@
 package controller;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -16,16 +17,9 @@ import util.JSFUtil;
 @ViewScoped
 public class FabricanteBean {
 
-	private ListDataModel<Fabricante> fabricantes;
 	private Fabricante fabricante;
-
-	public ListDataModel<Fabricante> getFabricantes() {
-		return fabricantes;
-	}
-
-	public void setFabricantes(ListDataModel<Fabricante> fabricantes) {
-		this.fabricantes = fabricantes;
-	}
+	private List<Fabricante> fabricantes;
+	private List<Fabricante> fabricantesFiltrados;
 
 	public Fabricante getFabricante() {
 		return fabricante;
@@ -33,6 +27,22 @@ public class FabricanteBean {
 
 	public void setFabricante(Fabricante fabricante) {
 		this.fabricante = fabricante;
+	}
+	
+	public List<Fabricante> getFabricantes() {
+		return fabricantes;
+	}
+
+	public void setFabricantes(List<Fabricante> fabricantes) {
+		this.fabricantes = fabricantes;
+	}
+
+	public List<Fabricante> getFabricantesFiltrados() {
+		return fabricantesFiltrados;
+	}
+	
+	public void setFabricantesFiltrados(List<Fabricante> fabricantesFiltrados) {
+		this.fabricantesFiltrados = fabricantesFiltrados;
 	}
 
 	@PostConstruct
@@ -44,8 +54,7 @@ public class FabricanteBean {
 	private void atualizarLista() {
 		try {
 			FabricanteDAO dao = new FabricanteDAO();
-			List<Fabricante> lista = dao.listar();
-			fabricantes = new ListDataModel<>(lista);
+			fabricantes = dao.listar();
 		} catch (SQLException e) {
 			JSFUtil.adicionarMensagemErro(e.getMessage());
 		}
@@ -67,10 +76,6 @@ public class FabricanteBean {
 		}
 	}
 	
-	public void prepararExcluir() {
-		fabricante = fabricantes.getRowData();
-	}
-	
 	public void excluir() {
 		try {
 			FabricanteDAO dao = new FabricanteDAO();
@@ -81,10 +86,6 @@ public class FabricanteBean {
 		} catch (SQLException e) {
 			JSFUtil.adicionarMensagemErro(e.getMessage());
 		}
-	}
-	
-	public void prepararEditar() {
-		fabricante = fabricantes.getRowData();
 	}
 	
 	public void editar() {

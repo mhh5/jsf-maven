@@ -14,10 +14,10 @@
 
 	<ui:define name="conteudo">
 		<h:form id="formFabricantes">
-			<p:dataTable id="tabelaFabricantes"
+			<p:dataTable id="tabelaFabricantes" widgetVar="dataTableFabricantes"
 				value="#{fabricanteBean.fabricantes}" var="fabricante"
-				emptyMessage="Nenhum registro encontrado." paginator="true"
-				rows="5">
+				filteredValue="#{fabricanteBean.fabricantesFiltrados}"
+				emptyMessage="Nenhum registro encontrado." paginator="true" rows="5">
 				<f:facet name="header">
 					Fabricantes
 				</f:facet>
@@ -34,14 +34,18 @@
 
 				<p:column headerText="Opções">
 					<p:commandButton icon="ui-icon-trash"
-						actionListener="#{fabricanteBean.prepararExcluir}"
 						oncomplete="PF('excluir').show();"
-						update=":formModalExcluir:modalExcluir" />	
+						update=":formModalExcluir:modalExcluir">
+						<f:setPropertyActionListener value="#{fabricante}"
+							target="#{fabricanteBean.fabricante}" />
+					</p:commandButton>
 
 					<p:commandButton icon="ui-icon-pencil"
-						actionListener="#{fabricanteBean.prepararEditar}"
 						oncomplete="PF('editar').show();"
-						update=":formModalEditar:modalEditar" />
+						update=":formModalEditar:modalEditar">
+						<f:setPropertyActionListener value="#{fabricante}"
+							target="#{fabricanteBean.fabricante}" />
+					</p:commandButton>
 				</p:column>
 
 				<f:facet name="footer">
@@ -67,7 +71,7 @@
 
 					<p:commandButton value="Salvar"
 						actionListener="#{fabricanteBean.adicionar}"
-						oncomplete="PF('adicionar').hide();"
+						oncomplete="PF('adicionar').hide(); PF('dataTableFabricantes').clearFilters();"
 						update=":formFabricantes:tabelaFabricantes :mensagemGlobal" />
 				</h:panelGrid>
 			</h:form>
@@ -89,7 +93,7 @@
 
 					<p:commandButton value="Excluir"
 						actionListener="#{fabricanteBean.excluir}"
-						oncomplete="PF('excluir').hide();"
+						oncomplete="PF('excluir').hide(); PF('dataTableFabricantes').clearFilters();"
 						update=":formFabricantes:tabelaFabricantes :mensagemGlobal" />
 				</h:panelGrid>
 			</h:form>
@@ -109,7 +113,7 @@
 
 					<p:commandButton value="Editar"
 						actionListener="#{fabricanteBean.editar}"
-						oncomplete="PF('editar').hide();"
+						oncomplete="PF('editar').hide(); PF('dataTableFabricantes').clearFilters();"
 						update=":formFabricantes:tabelaFabricantes :mensagemGlobal" />
 				</h:panelGrid>
 			</h:form>
