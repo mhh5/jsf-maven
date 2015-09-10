@@ -6,11 +6,12 @@ public class Produto {
 	private String descricao;
 	private Integer quantidade;
 	private Double preco;
-	private Fabricante fabricante;
+	private Fabricante fabricante = new Fabricante();
 	
 	public Integer getId() {
 		return id;
 	}
+	
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -39,5 +40,9 @@ public class Produto {
 		this.fabricante = fabricante;
 	}
 	
+	@Override
+	public String toString() {
+		return id+" - "+descricao+" - "+quantidade+" - "+preco+" - "+fabricante.getDescricao();
+	}
 	
 }

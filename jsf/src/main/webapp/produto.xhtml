@@ -2,33 +2,173 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:opt="http://primefaces.prime.com.tr/optimus">
+	xmlns:p="http://primefaces.org/ui" template="/templates/template.xhtml">
 
-<h:head>
-	<title>Produtos</title>
-</h:head>
+	<ui:define name="menu">
+		<ui:include src="/templates/menu.xhtml" />
+	</ui:define>
 
-<h:body>
-	<h:form>
-		<h:panelGrid columns="2">
-			<h:outputLabel value="Código " />
-			<h:inputText value="" size="15" />
+	<ui:define name="conteudo">
+		<h:form id="formProdutos">
+			<p:dataTable id="tabelaProdutos" widgetVar="dataTableProdutos"
+				value="#{produtoBean.produtos}" var="produto"
+				filteredValue="#{produtoBean.produtosFiltrados}"
+				emptyMessage="Nenhum resgistro encontrado." paginator="true"
+				rows="5">
+				<f:facet name="header">
+					Produtos
+				</f:facet>
 
-			<h:outputLabel value="Produto " />
-			<h:inputText value="" size="50" />
-		</h:panelGrid>
+				<p:column headerText="Id" filterBy="#{produto.id}"
+					sortBy="#{produto.id}">
+					<h:outputText value="#{produto.id}" />
+				</p:column>
 
-		<h:panelGrid columns="2">
-			<h:commandButton action="#" value="Voltar" />
-			<h:commandButton action="#" value="Gravar" />
-		</h:panelGrid>
-	</h:form>
-</h:body>
+				<p:column headerText="Descrição" filterBy="#{produto.descricao}"
+					sortBy="#{produto.descricao}">
+					<h:outputText value="#{produto.descricao}" />
+				</p:column>
 
-</html>
+				<p:column headerText="Quantidade" filterBy="#{produto.quantidade}"
+					sortBy="#{produto.quantidade}">
+					<h:outputText value="#{produto.quantidade}" />
+				</p:column>
+
+				<p:column headerText="Preço" filterBy="#{produto.preco}"
+					sortBy="#{produto.preco}">
+					<h:outputText value="#{produto.preco}" />
+				</p:column>
+
+				<p:column headerText="Fabricante"
+					filterBy="#{produto.fabricante.descricao}"
+					sortBy="#{produto.fabricante.descricao}">
+					<h:outputText value="#{produto.fabricante.descricao}" />
+				</p:column>
+
+				<p:column headerText="Opções">
+					<p:commandButton icon="ui-icon-trash"
+						onclick="PF('excluir').show();"
+						update=":formModalExcluir:modalExcluir :mensagemGlobal">
+						<f:setPropertyActionListener value="#{produto}"
+							target="#{produtoBean.produto}" />
+					</p:commandButton>
+
+					<p:commandButton icon="ui-icon-pencil"
+						actionListener="#{produtoBean.prepararEditar}"
+						oncomplete="PF('editar').show();"
+						update=":formModalEditar:modalEditar :mensagemGlobal">
+						<f:setPropertyActionListener value="#{produto}"
+							target="#{produtoBean.produto}" />
+					</p:commandButton>
+				</p:column>
+
+				<f:facet name="footer">
+					<p:commandButton value="Novo"
+						actionListener="#{produtoBean.prepararSalvar}"
+						oncomplete="PF('adicionar').show();"
+						update=":formModalAdicionar:modalAdicionar :mensagemGlobal" />
+				</f:facet>
+			</p:dataTable>
+		</h:form>
+
+		<p:dialog widgetVar="adicionar" closable="false" resizable="false"
+			appendTo="@(body)" header="Novo Produto">
+			<h:form id="formModalAdicionar">
+				<h:panelGrid id="modalAdicionar" columns="2">
+					<p:outputLabel value="Descrição " />
+					<p:inputText value="#{produtoBean.produto.descricao}" size="30"
+						maxlength="50" />
+
+					<p:outputLabel value="Quantidade" />
+					<p:inputText value="#{produtoBean.produto.quantidade}" size="10" />
+
+					<p:outputLabel value="Preço" />
+					<p:inputText value="#{produtoBean.produto.preco}" />
+
+					<p:outputLabel value="Fabricante " />
+					<p:selectOneMenu value="#{produtoBean.produto.fabricante.id}"
+						filter="true">
+						<f:selectItem itemValue="" itemLabel="Selecione um fabricante" />
+						<f:selectItems value="#{produtoBean.fabricantes}" var="item"
+							itemValue="#{item.id}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Cancelar" onclick="PF('adicionar').hide();" />
+					<p:commandButton value="Salvar"
+						actionListener="#{produtoBean.salvar}"
+						oncomplete="PF('adicionar').hide(); PF('dataTableProdutos').clearFilters();"
+						update=":formProdutos:tabelaProdutos :mensagemGlobal" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="excluir" closable="false" resizable="false"
+			modal="true" appendTo="@(body)" header="Excluir Produto">
+			<h:form id="formModalExcluir">
+				<h:panelGrid id="modalExcluir" columns="2">
+					<p:outputLabel value="Descrição " />
+					<h:outputText value="#{produtoBean.produto.descricao}" />
+
+					<p:outputLabel value="Quantidade " />
+					<h:outputText value="#{produtoBean.produto.quantidade}" />
+
+					<p:outputLabel value="Preço " />
+					<h:outputText value="#{produtoBean.produto.preco}" />
+
+					<p:outputLabel value="Fabricante " />
+					<h:outputText value="#{produtoBean.produto.fabricante.descricao}" />
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Cancelar" onclick="PF('excluir').hide();" />
+
+					<p:commandButton value="Excluir"
+						actionListener="#{produtoBean.excluir}"
+						oncomplete="PF('excluir').hide(); PF('dataTableProdutos').clearFilters();"
+						update=":formProdutos:tabelaProdutos :mensagemGlobal" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+
+		<p:dialog widgetVar="editar" closable="false" resizable="false"
+			modal="true" appendTo="@(body)" header="Editar Produto">
+			<h:form id="formModalEditar">
+				<h:panelGrid id="modalEditar" columns="2">
+					<p:outputLabel value="Descrição " />
+					<p:inputText value="#{produtoBean.produto.descricao}" />
+
+					<p:outputLabel value="Quantidade " />
+					<p:inputText value="#{produtoBean.produto.quantidade}" />
+
+					<p:outputLabel value="Preço " />
+					<p:inputText value="#{produtoBean.produto.preco}" />
+
+					<p:outputLabel value="Fabricante " />
+					<p:selectOneMenu value="#{produtoBean.produto.fabricante.id}">
+						<f:selectItem itemValue="#{produtoBean.produto.fabricante.id}"
+							itemLabel="#{produtoBean.produto.fabricante.descricao}" />
+
+						<f:selectItems value="#{produtoBean.fabricantes}" var="item"
+							itemValue="#{item.id}" itemLabel="#{item.descricao}" />
+					</p:selectOneMenu>
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Cancelar" onclick="PF('editar').hide();" />
+
+					<p:commandButton value="Editar"
+						actionListener="#{produtoBean.editar}"
+						oncomplete="PF('editar').hide(); PF('dataTableProdutos').clearFilters();"
+						update=":formProdutos:tabelaProdutos :mensagemGlobal" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+	</ui:define>
+
+</ui:composition>
